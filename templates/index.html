@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Vertex Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #EAEBEC;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .chat-container {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #FFECBB;
+            padding: 10px;
+            box_shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            boder-radius: 8px;
+        }
+
+        .chat-box {
+            border: 0px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+            background-color: #FFECBB;
+            margin-bottom: 10px;
+        }
+        
+        .chat-box p {
+            margin: 10px 0; 
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 10px;
+            background-color: #FFECBB;
+            border-radius: 5px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background-color: #BCA063
+            border-radius: 5px; 
+            border: 1px solid #BCA063;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb:hover {
+            background-color: #60512C;
+        }            
+ 
+        .chat-box::-webkit-scrollbar-track {
+            background-color: #60512C;  
+            border-radius: 5px;
+        }                  
+
+        .chat-box {
+            scrollbar-width: thin;
+            scrollbar-color: #BCA063 #FFECBB;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px;
+            background-color: #FFECBB;
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        .user-message-box {
+            border: 0px solid #cccccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            background-color: #BCA063;
+            box-shadow: 0 0 5px rgba(129, 109, 65, 0.5); 
+        }            
+        
+        .user-message {
+            flex-grow: 1;
+            text-align: right;
+            color: #3c3c3c;
+            margin: 0;
+        }
+
+        .bot-message {
+            text-align: left;
+            color: #3c3c3c;
+        }
+            
+        #userMessage {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 5px solid #BCA063;
+            border-radius: 5px;
+            color: #FFECBB;
+            background-color: #BCA063;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+            
+        #userMessage:focus {    
+            border-color: #816D41;
+            box-shadow: 0 0 5px rgba(129, 109, 65, 0.5); 
+        }
+
+        button {
+            padding: 10px 15pxç;
+            font-size: 16px;   
+            background-color: #BCA063;
+            color: #3c3c3c;
+            border-radius: 5px;
+            border: 5px solid #BCA063;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+            
+        button:hover {
+            background-color: #816D41;
+            border: 5px solid #816D41;
+        }
+    </style>
+    <script>
+        async function sendMessage() {
+            const userMessage = document.getElementById("userMessage").value;
+            if (userMessage.trim() === '') return;
+ 
+            // Add message to the chat 
+            const chatBox = document.getElementById("chatBox");        
+            const userMessageBox = document.createElement('Div');
+            userMessageBox.className = 'user-message-box';
+            const userMessageElem = document.createElement('p');
+            userMessageElem.className = 'user-message';
+            userMessageElem.textContent = userMessage;
+            userMessageBox.appendChild(userMessageElem);
+            chatBox.appendChild(userMessageBox);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            
+            //Send messages to the backend
+            const response = await fetch('/send-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userMessage: userMessage })
+            });
+            
+            const data = await response.json();
+
+            //Add response to the chat
+            const botMessageElem = document.createElement('p');
+            botMessageElem.className = 'bot-response';
+            botMessageElem.textContent = data.reply;
+            chatBox.appendChild(botMessageElem);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Clear input field
+            document.getElementById("userMessage").value = '';
+        }
+
+        //Send message when enter is pressed
+        document.addEventListener("DOMContentLoaded", function() {
+        const inputField = document.getElementById("userMessage");
+        inputField.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    });
+    </script>
+</head>
+<body>
+
+    <h1>Vertex Chat</h1>
+    
+    <div class="chat-container">
+        <div id="chatBox" class="chat-box">
+            <!--messages are displayd here-->
+        </div>
+ 
+        <div class="input-container">
+            <input type="text" id="userMessage" name="userMessage" placeholder="Add text here..." required>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</body>
+</html>
+            
+            
+
+            
+            
+            
+            
