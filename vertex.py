@@ -4,15 +4,16 @@ import re
 from vertexai.generative_models import GenerativeModel, SafetySetting, Part
 
 
-def multiturn_generate_content(prompt_queue):
+def multiturn_generate_content(prompt_queue, chat_history):
     vertexai.init(project="ultra-function-439306-r4", location="us-central1")
     model = GenerativeModel(
         "gemini-1.5-flash-002",
         system_instruction=[textsi_1]
     )
     chat = model.start_chat()
+    prompt = "\n".join(chat_history + [f"User: {prompt_queue}"])
     response = chat.send_message(
-        [prompt_queue],
+        [prompt],
         generation_config=generation_config,
         safety_settings=safety_settings
     )
@@ -21,9 +22,13 @@ def multiturn_generate_content(prompt_queue):
     res = re.sub(r"\*", "", text)
     res = re.sub(r"`", '"', res)
     print(res)
+    
+    chat_history.append(f"User: {prompt_queue}")
+    chat_history.append(f"AI: {res}")
+
     return res
 
-textsi_1 = """ """
+textsi_1 = """Helpful and assisting AI"""
 
 generation_config = {
     "max_output_tokens": 8192,

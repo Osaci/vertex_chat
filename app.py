@@ -6,6 +6,7 @@ from vertex import multiturn_generate_content
 app = Flask(__name__)
 
 prompt = queue.Queue()
+chat_history = []
 
 @app.route('/')
 def home():
@@ -13,6 +14,7 @@ def home():
 
 @app.route('/send-message', methods=['POST'])
 def send_message():
+    global chat_history
     data = request.get_json()
     user_message = data.get('userMessage', '')
     print(user_message)
@@ -28,9 +30,9 @@ def send_message():
             time.sleep(1)
             if not prompt.empty():
                 prompt_queue = prompt.get()
-                print(f'prompt_queue = {prompt_queue}')
-                response = multiturn_generate_content(prompt_queue)
+                response = multiturn_generate_content(prompt_queue, chat_history)
                 print(response)
+                print(f"Chat history: {chat_history}")
         return jsonify({'reply': response})
                   
     except Exception as e:
