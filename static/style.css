@@ -10,8 +10,9 @@ h1 {
 }
 
 .chat-container {
+    position: relative;
     width: 90vw;
-    height: 85vh;
+    height: 75vh;
     margin: 0 auto;
     background-color: #FFECBB;
     padding: 10px;
@@ -20,12 +21,13 @@ h1 {
 }
 
 .chat-box {
+    flex-grow: 1;
+    overflow-y: scroll;
     border: 0px solid #3e3e3e;
     padding: 10px;
-    height: 500px;
-    overflow-y: scroll;
     background-color: #FFECBB;
     margin-bottom: 10px;
+    max-height: calc(75vh - 90px);
 }
 
 .chat-box p {
@@ -50,7 +52,11 @@ h1 {
 }
 
 .input-container {
+    position: absolute;
     display: flex;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
     justify-content: space-between;
     gap: 10px;
     padding: 10px;
